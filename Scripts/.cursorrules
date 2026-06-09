@@ -1,0 +1,4 @@
+This is a Roblox incremental clicker game called "Brainrot Clicker" written in Luau.
+Use RemoteEvents for all client-server communication.
+Keep all economy numbers in a module named EconomyConfig.
+Never use deprecated Roblox APIs.

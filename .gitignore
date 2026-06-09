@@ -1,0 +1,13 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs / temp
+*.log
+
+# Build/sync artifacts (adjust if your tooling makes extra folders)
+build/
+out/
+temp/

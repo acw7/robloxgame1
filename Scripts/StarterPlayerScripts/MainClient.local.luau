@@ -116,6 +116,21 @@ sellNotifEv.OnClientEvent:Connect(function(amt)
     end)
 end)
 
+local offlineEv = RS:WaitForChild('OfflineEarnings')
+local offlinePop = frm(sg, Color3.fromRGB(0,18,40), UDim2.new(0,320,0,64), UDim2.new(0.5,-160,1,-160))
+corner(10, offlinePop); offlinePop.BackgroundTransparency = 1
+lbl(offlinePop, 'Welcome back!', UDim2.new(1,0,0,22), UDim2.new(0,0,0,4), GOLD, 14)
+local offlineSub = lbl(offlinePop, '', UDim2.new(1,0,0,22), UDim2.new(0,0,0,28), TXT, 13)
+offlineEv.OnClientEvent:Connect(function(bonus)
+    offlinePop.BackgroundTransparency = 0
+    offlineSub.Text = 'You earned '..fmt(bonus)..' Brains while away!'
+    Tween:Create(offlinePop,TweenInfo.new(0.2),{Position=UDim2.new(0.5,-160,1,-180)}):Play()
+    task.delay(4.5, function()
+        Tween:Create(offlinePop,TweenInfo.new(0.4),{Position=UDim2.new(0.5,-160,1,-100)}):Play()
+        task.delay(0.4, function() offlinePop.BackgroundTransparency = 1 end)
+    end)
+end)
+
 local critPop=lbl(sg,'CRIT! x5',UDim2.new(0,120,0,40),UDim2.new(0.5,-60,0.35,0),RED,28)
 critPop.BackgroundTransparency=1;critPop.TextStrokeTransparency=0;critPop.Visible=false
 critEv.OnClientEvent:Connect(function()
@@ -188,8 +203,8 @@ local function makeUpgradeCard(parent,u,isUpg)
 end
 
 for _,u in GD.Upgrades do
-    local parent = u.tier=="generator" and genScroll
-        or u.tier=="NeuralExpansion" and neuralScroll
+    local parent = u.tier=='generator' and genScroll
+        or u.tier=='NeuralExpansion' and neuralScroll
         or upgScroll
     makeUpgradeCard(parent,u,true)
 end

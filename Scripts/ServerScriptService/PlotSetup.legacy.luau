@@ -11,6 +11,7 @@ local sellNotifEv= RS:WaitForChild("SellNotif")
 local critEv     = RS:WaitForChild("CritNotif")
 local bpsStormEv = RS:WaitForChild("BpsStorm")
 local tierUnlockedEv = RS:WaitForChild("TierUnlocked")
+local offlineEv  = RS:WaitForChild("OfflineEarnings")
 
 local function getMaxTier(rebirthCount)
     local maxT = 1
@@ -314,10 +315,32 @@ local function applySpeed(player,char)
 end
 
 local function onAdded(player)
-    setupData(player)
+    local saved = setupData(player)
     local plot=PlotMgr.AssignPlot(player)
     if not plot then warn("No free plot for",player.Name); return end
     Stats.Recalculate(player)
+
+    -- Offline earnings: cap 8 hours (28800s), 50% BPS efficiency
+    if saved and saved.LastLogout and saved.LastLogout > 0 then
+        local elapsed = math.min(os.time() - saved.LastLogout, 28800)
+        local pd2   = player:FindFirstChild("PlayerData")
+        local bpsV2 = pd2 and pd2:FindFirstChild("BPS")
+        local bps   = bpsV2 and bpsV2.Value or 0
+        local bonus = math.floor(bps * elapsed * 0.5)
+        if bonus > 0 then
+            local ls2     = player:FindFirstChild("leaderstats")
+            local brainV2 = ls2 and ls2:FindFirstChild("Brain")
+            if brainV2 then brainV2.Value += bonus end
+            local totalV2 = pd2 and pd2:FindFirstChild("TotalBrains")
+            if totalV2 then totalV2.Value += bonus end
+            task.delay(2, function()  -- delay so client GUI is loaded
+                if player:IsDescendantOf(game) then
+                    offlineEv:FireClient(player, bonus)
+                end
+            end)
+        end
+    end
+
     connectPlot(player,plot)
     plotEv:FireClient(player,plot)
     local function teleport(char)

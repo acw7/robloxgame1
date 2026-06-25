@@ -10,6 +10,17 @@ local openShopEv = RS:WaitForChild("OpenShop")
 local sellNotifEv= RS:WaitForChild("SellNotif")
 local critEv     = RS:WaitForChild("CritNotif")
 local bpsStormEv = RS:WaitForChild("BpsStorm")
+local tierUnlockedEv = RS:WaitForChild("TierUnlocked")
+
+local function getMaxTier(rebirthCount)
+    local maxT = 1
+    for rb, ms in GD.RebirthMilestones do
+        if rebirthCount >= rb and ms.unlockTier then
+            maxT = math.max(maxT, ms.unlockTier)
+        end
+    end
+    return maxT
+end
 
 local clickThrottle={}
 local GEN_COLORS={BrainJar=BrickColor.new("Bright blue"),MemeFarm=BrickColor.new("Bright green"),DoomscrollRig=BrickColor.new("Dark orange"),NeuralTap=BrickColor.new("Electric blue"),SkibidiLab=BrickColor.new("Bright violet")}
@@ -163,51 +174,60 @@ local function connectPlot(player,plot)
         end)
     end
 
-    local touchDebounce={}
-    for _,gen in GD.Generators do
-        local pad=plot:FindFirstChild(gen.id.."Pad"); if not pad then continue end
+    local pd2     = player:FindFirstChild("PlayerData")
+    local rcV2    = pd2 and pd2:FindFirstChild("RebirthCount")
+    local maxTier = getMaxTier(rcV2 and rcV2.Value or 0)
+
+    local touchDebounce = {}
+
+    local function wirePadForGen(gen)
+        local pad = plot:FindFirstChild(gen.id.."Pad"); if not pad then return end
         pad.Touched:Connect(function(hit)
-            local char=hit.Parent
-            local p=Players:GetPlayerFromCharacter(char)
-            if not p or p~=player then return end
-            local now=tick()
-            if touchDebounce[gen.id] and now-touchDebounce[gen.id]<0.4 then return end
-            touchDebounce[gen.id]=now
-            local ls=player:FindFirstChild("leaderstats")
-            local pd2=player:FindFirstChild("PlayerData")
-            if not ls or not pd2 then return end
-            local brainV=ls:FindFirstChild("Brain")
-            local genF=pd2:FindFirstChild("Generators")
-            local uF2=pd2:FindFirstChild("Upgrades")
-            local mF2=pd2:FindFirstChild("MetaUpgrades")
-            if not brainV or not genF then return end
-            local cv=genF:FindFirstChild(gen.id); if not cv then return end
-            local earlyAccess=(mF2 and mF2:FindFirstChild("EarlyAccess") and mF2.EarlyAccess.Value)
+            local char = hit.Parent
+            local p = Players:GetPlayerFromCharacter(char)
+            if not p or p ~= player then return end
+            local now = tick()
+            if touchDebounce[gen.id] and now - touchDebounce[gen.id] < 0.4 then return end
+            touchDebounce[gen.id] = now
+            local ls3  = player:FindFirstChild("leaderstats")
+            local pd3  = player:FindFirstChild("PlayerData")
+            if not ls3 or not pd3 then return end
+            local brainV3 = ls3:FindFirstChild("Brain")
+            local genF3   = pd3:FindFirstChild("Generators")
+            local uF3     = pd3:FindFirstChild("Upgrades")
+            local mF3     = pd3:FindFirstChild("MetaUpgrades")
+            if not brainV3 or not genF3 then return end
+            local cv = genF3:FindFirstChild(gen.id); if not cv then return end
+            local earlyAccess = (mF3 and mF3:FindFirstChild("EarlyAccess") and mF3.EarlyAccess.Value)
                 and (gen.id=="BrainJar" or gen.id=="MemeFarm")
             local function getCost(owned)
-                local c=GD.GetGeneratorCost(gen,owned)
+                local c = GD.GetGeneratorCost(gen, owned)
                 return earlyAccess and math.floor(c*0.5) or c
             end
-            local qty=1
-            local bulkV=uF2 and uF2:FindFirstChild("BulkBuyI")
+            local qty = 1
+            local bulkV = uF3 and uF3:FindFirstChild("BulkBuyI")
             if bulkV and bulkV.Value then
-                qty=0; local tb=brainV.Value; local to=cv.Value
-                for _=1,5 do
-                    local c2=getCost(to)
-                    if tb>=c2 then tb-=c2; to+=1; qty+=1 else break end
+                qty = 0; local tb = brainV3.Value; local to = cv.Value
+                for _ = 1, 5 do
+                    local c2 = getCost(to)
+                    if tb >= c2 then tb -= c2; to += 1; qty += 1 else break end
                 end
-                if qty==0 then return end
+                if qty == 0 then return end
             else
-                if brainV.Value<getCost(cv.Value) then return end
+                if brainV3.Value < getCost(cv.Value) then return end
             end
-            local totalCost=0
-            for i=0,qty-1 do totalCost+=getCost(cv.Value+i) end
-            if brainV.Value<totalCost then return end
-            brainV.Value-=totalCost; cv.Value+=qty
+            local totalCost = 0
+            for i = 0, qty-1 do totalCost += getCost(cv.Value+i) end
+            if brainV3.Value < totalCost then return end
+            brainV3.Value -= totalCost; cv.Value += qty
             Stats.Recalculate(player)
-            spawnMachine(gen,plot)
-            updatePadLabel(pad,gen,cv.Value)
+            spawnMachine(gen, plot)
+            updatePadLabel(pad, gen, cv.Value)
         end)
+    end
+
+    for _, gen in GD.Generators do
+        if (gen.tier or 1) <= maxTier then wirePadForGen(gen) end
     end
 
     for _,obj in plot:GetDescendants() do
@@ -257,6 +277,22 @@ local function connectPlot(player,plot)
     end)
 
     startOrbSpawner(player,plot)
+
+    -- Watch RebirthCount for milestone tier unlocks
+    if rcV2 then
+        rcV2.Changed:Connect(function(newCount)
+            local ms = GD.RebirthMilestones[newCount]
+            if ms and ms.unlockTier then
+                -- Wire pads for the newly unlocked tier
+                for _, gen in GD.Generators do
+                    if (gen.tier or 1) == ms.unlockTier then
+                        wirePadForGen(gen)
+                    end
+                end
+                tierUnlockedEv:FireClient(player, ms.unlockTier)
+            end
+        end)
+    end
 end
 
 local function applySpeed(player,char)

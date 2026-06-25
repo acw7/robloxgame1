@@ -161,7 +161,6 @@ local upgScroll=scroll(shopPanel)
 local genScroll=scroll(shopPanel)
 local metaScroll=scroll(shopPanel)
 local neuralScroll=scroll(shopPanel)
-local neuralScroll=scroll(shopPanel)
 
 local rebirthPanel=frm(shopPanel,DARK,UDim2.new(1,0,1,-40),UDim2.new(0,0,0,40))
 rebirthPanel.BackgroundTransparency=1;rebirthPanel.Visible=false
@@ -215,7 +214,6 @@ local function openShop(cat)
     upgScroll.Visible=cat=='upgrades'
     genScroll.Visible=cat=='generator'
     metaScroll.Visible=cat=='meta'
-    neuralScroll.Visible=cat=='NeuralExpansion'
     neuralScroll.Visible=cat=='NeuralExpansion'
     rebirthPanel.Visible=cat=='rebirth'
     local titles={upgrades='Upgrade Lab',generator='Generator Console',meta='Meta Lab',rebirth='Rebirth Shrine',NeuralExpansion='Neural Expansion Lab'}

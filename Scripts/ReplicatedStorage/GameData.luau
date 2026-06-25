@@ -12,6 +12,12 @@ GD.Generators = {
     {id="DopamineDen",    name="Dopamine Den",       desc="Pure dopamine production.",       baseCost=500000000,       baseBPS=125000,      costMult=1.15, tier=2},
     {id="CortexCollider", name="Cortex Collider",    desc="Smashes cortex for big BPS.",     baseCost=5000000000,      baseBPS=600000,      costMult=1.15, tier=2},
     {id="QuantumQuirk",   name="Quantum Quirk",      desc="Quantum-entangled brain farms.",  baseCost=50000000000,     baseBPS=3000000,     costMult=1.15, tier=2},
+    -- Tier 3 (unlock at 5th rebirth via GD.RebirthMilestones)
+    {id="SynapseFlood",   name="Synapse Flood",    desc="Floods every synapse.",           baseCost=500000000000,     baseBPS=200000000,    costMult=1.15, tier=3},
+    {id="VaporBrain",     name="Vapor Brain",       desc="Vaporizes neurons for gain.",     baseCost=5000000000000,    baseBPS=1000000000,   costMult=1.15, tier=3},
+    {id="QuantumSkibidi", name="Quantum Skibidi",   desc="Skibidi at the quantum level.",   baseCost=50000000000000,   baseBPS=5000000000,   costMult=1.15, tier=3},
+    {id="HiveMindHub",    name="Hive Mind Hub",     desc="Connects all brains in a hive.",  baseCost=500000000000000,  baseBPS=25000000000,  costMult=1.15, tier=3},
+    {id="CosmicCortex",   name="Cosmic Cortex",     desc="Cortex the size of a galaxy.",    baseCost=5000000000000000, baseBPS=125000000000, costMult=1.15, tier=3},
 }
 GD.Milestones    = {10,25,50,100,200}
 GD.MilestoneMult = 2
@@ -60,6 +66,12 @@ GD.Upgrades = {
     {id="DopamineRushI",   name="Dopamine Rush I",      desc="×1.5 global BPS",            tier="NeuralExpansion", type="globalBPS", baseCost=2000000000,    bpsMult=1.5,             req={type="genOwned",id="DopamineDen",count=5}},
     {id="ColliderMatrix",  name="Collider Matrix",      desc="×2 Cortex Collider BPS",     tier="NeuralExpansion", type="genMult",   baseCost=20000000000,   genId="CortexCollider", genMult=2,   req={type="genOwned",id="CortexCollider",count=5}},
     {id="QuantumEntangle", name="Quantum Entanglement", desc="×2 global BPS",              tier="NeuralExpansion", type="globalBPS", baseCost=200000000000,  bpsMult=2,               req={type="genOwned",id="QuantumQuirk",count=5}},
+    -- === Cortex Overdrive (Tier 3 upgrades, visible after 5th rebirth) ===
+    {id="FloodGates",     name="Flood Gates",        desc="×2 Synapse Flood BPS",           tier="CortexOverdrive", type="genMult",   baseCost=5000000000000,     genId="SynapseFlood",   genMult=2,  req={type="genOwned",id="SynapseFlood",count=10}},
+    {id="VaporLock",      name="Vapor Lock",          desc="×2 Vapor Brain BPS",             tier="CortexOverdrive", type="genMult",   baseCost=50000000000000,    genId="VaporBrain",     genMult=2,  req={type="genOwned",id="VaporBrain",count=10}},
+    {id="SkibidiQuantum", name="Skibidi Quantum",     desc="×1.5 global BPS",               tier="CortexOverdrive", type="globalBPS", baseCost=200000000000000,   bpsMult=1.5,             req={type="genOwned",id="QuantumSkibidi",count=5}},
+    {id="HiveSync",       name="Hive Synchrony",      desc="×2 Hive Mind Hub BPS",           tier="CortexOverdrive", type="genMult",   baseCost=2000000000000000,  genId="HiveMindHub",    genMult=2,  req={type="genOwned",id="HiveMindHub",count=5}},
+    {id="CortexEvent",    name="Cortex Event",        desc="×3 global BPS",                 tier="CortexOverdrive", type="globalBPS", baseCost=20000000000000000, bpsMult=3,               req={type="genOwned",id="CosmicCortex",count=5}},
 }
 GD.MetaUpgrades = {
     {id="NeuralMultiplier",  name="Neural Multiplier",  desc="×1.2 global BPS, permanent",       neuronCost=1, type="neuronMult",    neuronBpsMult=1.2},

@@ -176,6 +176,8 @@ local upgScroll=scroll(shopPanel)
 local genScroll=scroll(shopPanel)
 local metaScroll=scroll(shopPanel)
 local neuralScroll=scroll(shopPanel)
+local cortexScroll=scroll(shopPanel)
+local cortexScroll=scroll(shopPanel)
 
 local rebirthPanel=frm(shopPanel,DARK,UDim2.new(1,0,1,-40),UDim2.new(0,0,0,40))
 rebirthPanel.BackgroundTransparency=1;rebirthPanel.Visible=false
@@ -205,6 +207,7 @@ end
 for _,u in GD.Upgrades do
     local parent = u.tier=='generator' and genScroll
         or u.tier=='NeuralExpansion' and neuralScroll
+        or u.tier=='CortexOverdrive' and cortexScroll
         or upgScroll
     makeUpgradeCard(parent,u,true)
 end
@@ -230,8 +233,9 @@ local function openShop(cat)
     genScroll.Visible=cat=='generator'
     metaScroll.Visible=cat=='meta'
     neuralScroll.Visible=cat=='NeuralExpansion'
+    cortexScroll.Visible=cat=='CortexOverdrive'
     rebirthPanel.Visible=cat=='rebirth'
-    local titles={upgrades='Upgrade Lab',generator='Generator Console',meta='Meta Lab',rebirth='Rebirth Shrine',NeuralExpansion='Neural Expansion Lab'}
+    local titles={upgrades='Upgrade Lab',generator='Generator Console',meta='Meta Lab',rebirth='Rebirth Shrine',NeuralExpansion='Neural Expansion Lab',CortexOverdrive='Cortex Overdrive Lab'}
     shopTitle.Text=titles[cat] or cat
 end
 local function closeShop()

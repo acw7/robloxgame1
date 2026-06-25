@@ -32,11 +32,17 @@ local GEN_COLORS = {
     NeuralNetwork=BrickColor.new("Cyan"),          MemeVault=BrickColor.new("Lime green"),
     DopamineDen=BrickColor.new("Hot pink"),        CortexCollider=BrickColor.new("Deep orange"),
     QuantumQuirk=BrickColor.new("Magenta"),
+    -- Tier 3
+    SynapseFlood=BrickColor.new("Bright red"),      VaporBrain=BrickColor.new("Cyan"),
+    QuantumSkibidi=BrickColor.new("Dark purple"),   HiveMindHub=BrickColor.new("Bright yellow"),
+    CosmicCortex=BrickColor.new("White"),
 }
 local GEN_SLOTS = {
     BrainJar=1, MemeFarm=2, DoomscrollRig=3, NeuralTap=4, SkibidiLab=5,
     -- Tier 2 (slots 6-10 on second floor)
     NeuralNetwork=6, MemeVault=7, DopamineDen=8, CortexCollider=9, QuantumQuirk=10,
+    -- Tier 3 (slots 11-15)
+    SynapseFlood=11, VaporBrain=12, QuantumSkibidi=13, HiveMindHub=14, CosmicCortex=15,
 }
 
 local function fmt(n) return GD.FormatNumber(n) end
@@ -264,7 +270,7 @@ local function connectPlot(player,plot)
                 local rpV2=ls2 and ls2:FindFirstChild("RP")
                 if not rpV2 or rpV2.Value<1 then return end
                 openShopEv:FireClient(player,"meta")
-            elseif cat=="generator" or cat=="upgrades" or cat=="rebirth" or cat=="NeuralExpansion" then
+            elseif cat=="generator" or cat=="upgrades" or cat=="rebirth" or cat=="NeuralExpansion" or cat=="CortexOverdrive" then
                 openShopEv:FireClient(player,cat)
             end
         end)

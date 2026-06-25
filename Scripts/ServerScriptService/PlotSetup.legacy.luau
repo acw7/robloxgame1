@@ -4,6 +4,7 @@ local SSS        = game:GetService("ServerScriptService")
 local GD         = require(RS:WaitForChild("GameData"))
 local Stats      = require(SSS:WaitForChild("StatsCalculator"))
 local PlotMgr    = require(SSS:WaitForChild("PlotManager"))
+local DataMgr    = require(SSS:WaitForChild("DataManager"))
 local plotEv     = RS:WaitForChild("PlotAssigned")
 local openShopEv = RS:WaitForChild("OpenShop")
 local sellNotifEv= RS:WaitForChild("SellNotif")
@@ -17,21 +18,37 @@ local GEN_SLOTS={BrainJar=1,MemeFarm=2,DoomscrollRig=3,NeuralTap=4,SkibidiLab=5}
 local function fmt(n) return GD.FormatNumber(n) end
 
 local function setupData(player)
-    if player:FindFirstChild("leaderstats") then return end
-    local ls=Instance.new("Folder");ls.Name="leaderstats";ls.Parent=player
-    Instance.new("NumberValue",ls).Name="Brain"
-    Instance.new("IntValue",ls).Name="RP"
-    local pd=Instance.new("Folder");pd.Name="PlayerData";pd.Parent=player
-    for _,n in {"TotalBrains","RawBrains","BPC","BPS"} do
-        local v=Instance.new("NumberValue",pd);v.Name=n;v.Value=n=="BPC" and 1 or 0
+    if player:FindFirstChild("leaderstats") then return nil end
+    local saved = DataMgr.Load(player)
+
+    local ls = Instance.new("Folder"); ls.Name="leaderstats"; ls.Parent=player
+    local brainV = Instance.new("NumberValue",ls); brainV.Name="Brain"; brainV.Value=saved.Brain
+    local rpV    = Instance.new("IntValue",ls);    rpV.Name="RP";       rpV.Value=saved.RP
+
+    local pd = Instance.new("Folder"); pd.Name="PlayerData"; pd.Parent=player
+    local tbV = Instance.new("NumberValue",pd); tbV.Name="TotalBrains"; tbV.Value=saved.TotalBrains
+    local rbV = Instance.new("NumberValue",pd); rbV.Name="RawBrains";   rbV.Value=saved.RawBrains
+    local bpcV2 = Instance.new("NumberValue",pd); bpcV2.Name="BPC"; bpcV2.Value=1
+    Instance.new("NumberValue",pd).Name="BPS"
+    local ccV = Instance.new("IntValue",pd); ccV.Name="ClickCount";   ccV.Value=saved.ClickCount
+    local rcV = Instance.new("IntValue",pd); rcV.Name="RebirthCount"; rcV.Value=saved.RebirthCount
+
+    local gF = Instance.new("Folder",pd); gF.Name="Generators"
+    for _,g in GD.Generators do
+        local v = Instance.new("IntValue",gF); v.Name=g.id
+        v.Value = saved.Generators[g.id] or 0
     end
-    Instance.new("IntValue",pd).Name="ClickCount"
-    local gF=Instance.new("Folder",pd);gF.Name="Generators"
-    for _,g in GD.Generators do Instance.new("IntValue",gF).Name=g.id end
-    local uF=Instance.new("Folder",pd);uF.Name="Upgrades"
-    for _,u in GD.Upgrades do Instance.new("BoolValue",uF).Name=u.id end
-    local mF=Instance.new("Folder",pd);mF.Name="MetaUpgrades"
-    for _,u in GD.MetaUpgrades do Instance.new("BoolValue",mF).Name=u.id end
+    local uF = Instance.new("Folder",pd); uF.Name="Upgrades"
+    for _,u in GD.Upgrades do
+        local v = Instance.new("BoolValue",uF); v.Name=u.id
+        v.Value = saved.Upgrades[u.id] or false
+    end
+    local mF = Instance.new("Folder",pd); mF.Name="MetaUpgrades"
+    for _,u in GD.MetaUpgrades do
+        local v = Instance.new("BoolValue",mF); v.Name=u.id
+        v.Value = saved.MetaUpgrades[u.id] or false
+    end
+    return saved  -- returned to onAdded for offline earnings (Task 6)
 end
 
 local function spawnMachine(gen,plot)
@@ -267,5 +284,19 @@ local function onAdded(player)
 end
 
 Players.PlayerAdded:Connect(onAdded)
-Players.PlayerRemoving:Connect(function(p) clickThrottle[p]=nil; PlotMgr.FreePlot(p) end)
+Players.PlayerRemoving:Connect(function(p)
+    DataMgr.Save(p)
+    clickThrottle[p]=nil
+    PlotMgr.FreePlot(p)
+end)
+
+task.spawn(function()
+    while true do
+        task.wait(60)
+        for _, p in Players:GetPlayers() do
+            DataMgr.Save(p)
+        end
+    end
+end)
+
 for _,p in Players:GetPlayers() do task.spawn(onAdded,p) end

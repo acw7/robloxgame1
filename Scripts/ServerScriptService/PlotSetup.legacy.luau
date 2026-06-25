@@ -81,18 +81,57 @@ local function setupData(player)
     return saved  -- returned to onAdded for offline earnings (Task 6)
 end
 
-local function spawnMachine(gen,plot)
-    local machines=plot:FindFirstChild("Machines")
+local function attachLabel(instance, genName)
+    local labelTarget
+    if instance:IsA("Model") then
+        labelTarget = instance.PrimaryPart or instance:FindFirstChildWhichIsA("BasePart")
+    else
+        labelTarget = instance
+    end
+    if not labelTarget then return end
+    local bg = Instance.new("BillboardGui", labelTarget)
+    bg.Size = UDim2.new(0, 130, 0, 26)
+    bg.StudsOffset = Vector3.new(0, 4.5, 0)
+    local tl = Instance.new("TextLabel", bg)
+    tl.Size = UDim2.new(1, 0, 1, 0)
+    tl.BackgroundTransparency = 1
+    tl.Text = genName
+    tl.TextColor3 = Color3.new(1, 1, 1)
+    tl.TextStrokeTransparency = 0
+    tl.Font = Enum.Font.GothamBold
+    tl.TextSize = 13
+end
+
+local function spawnMachine(gen, plot)
+    local machines = plot:FindFirstChild("Machines")
     if not machines or machines:FindFirstChild(gen.id) then return end
-    local slot=plot:FindFirstChild("Slot"..(GEN_SLOTS[gen.id] or 0)); if not slot then return end
-    local m=Instance.new("Part");m.Name=gen.id;m.Size=Vector3.new(6,6,6)
-    m.Position=slot.Position+Vector3.new(0,3.5,0);m.Anchored=true
-    m.BrickColor=GEN_COLORS[gen.id] or BrickColor.new("Medium stone grey")
-    m.Material=Enum.Material.SmoothPlastic;m.Parent=machines
-    local bg=Instance.new("BillboardGui",m);bg.Size=UDim2.new(0,130,0,26);bg.StudsOffset=Vector3.new(0,4.5,0)
-    local tl=Instance.new("TextLabel",bg);tl.Size=UDim2.new(1,0,1,0)
-    tl.BackgroundTransparency=1;tl.Text=gen.name;tl.TextColor3=Color3.new(1,1,1)
-    tl.TextStrokeTransparency=0;tl.Font=Enum.Font.GothamBold;tl.TextSize=13
+    local slot = plot:FindFirstChild("Slot"..(GEN_SLOTS[gen.id] or 0))
+    if not slot then return end
+    local targetPos = slot.Position + Vector3.new(0, 3.5, 0)
+    local assets = game:GetService("ServerStorage"):FindFirstChild("GeneratorAssets")
+    local template = assets and assets:FindFirstChild(gen.id)
+    if template then
+        local m = template:Clone()
+        m.Name = gen.id
+        if m:IsA("Model") then
+            m:PivotTo(CFrame.new(targetPos))
+        else
+            m.Position = targetPos
+            m.Anchored = true
+        end
+        m.Parent = machines
+        attachLabel(m, gen.name)
+    else
+        local m = Instance.new("Part")
+        m.Name = gen.id
+        m.Size = Vector3.new(6, 6, 6)
+        m.Position = targetPos
+        m.Anchored = true
+        m.BrickColor = GEN_COLORS[gen.id] or BrickColor.new("Medium stone grey")
+        m.Material = Enum.Material.SmoothPlastic
+        m.Parent = machines
+        attachLabel(m, gen.name)
+    end
 end
 
 local function updatePadLabel(pad,gen,owned)

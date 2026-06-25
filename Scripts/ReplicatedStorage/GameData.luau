@@ -10,6 +10,14 @@ GD.Milestones    = {10,25,50,100,200}
 GD.MilestoneMult = 2
 GD.RebirthThreshold  = 100000
 GD.RPProductionBonus = 0.1
+GD.NeuronFormulaDivisor = 100000   -- neurons = max(1, floor(TotalBrains / this))
+GD.RebirthMultPerLevel  = 0.10     -- permanent +10% global BPS & BPC per rebirth (stacks)
+GD.RebirthMilestones = {
+    [1]  = { unlockTier = 2, upgradeCategory = "NeuralExpansion" },
+    [5]  = { unlockTier = 3, upgradeCategory = "CortexOverdrive" },
+    [10] = { extraMetaSlot = true },
+    [25] = { reserved = true },
+}
 function GD.GetGeneratorCost(gen,owned) return math.floor(gen.baseCost*(gen.costMult^owned)) end
 
 GD.Upgrades = {

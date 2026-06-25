@@ -177,7 +177,6 @@ local genScroll=scroll(shopPanel)
 local metaScroll=scroll(shopPanel)
 local neuralScroll=scroll(shopPanel)
 local cortexScroll=scroll(shopPanel)
-local cortexScroll=scroll(shopPanel)
 
 local rebirthPanel=frm(shopPanel,DARK,UDim2.new(1,0,1,-40),UDim2.new(0,0,0,40))
 rebirthPanel.BackgroundTransparency=1;rebirthPanel.Visible=false

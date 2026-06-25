@@ -1,10 +1,17 @@
 local GD = {}
 GD.Generators = {
-    {id="BrainJar",      name="Brain Jar",      desc="Leaks Brains slowly.",         baseCost=10,     baseBPS=0.1,  costMult=1.15},
-    {id="MemeFarm",      name="Meme Farm",       desc="Harvests viral memes.",         baseCost=100,    baseBPS=0.5,  costMult=1.15},
-    {id="DoomscrollRig", name="Doomscroll Rig",  desc="Auto-scrolls for raw output.", baseCost=1100,   baseBPS=4,    costMult=1.15},
-    {id="NeuralTap",     name="Neural Tap",       desc="Taps into the brain stem.",    baseCost=12000,  baseBPS=20,   costMult=1.15},
-    {id="SkibidiLab",    name="Skibidi Lab",      desc="Advanced skibidi science.",    baseCost=130000, baseBPS=100,  costMult=1.15},
+    -- Tier 1 (start)
+    {id="BrainJar",       name="Brain Jar",        desc="Leaks Brains slowly.",           baseCost=10,              baseBPS=0.1,         costMult=1.15, tier=1},
+    {id="MemeFarm",       name="Meme Farm",         desc="Harvests viral memes.",           baseCost=100,             baseBPS=0.5,         costMult=1.15, tier=1},
+    {id="DoomscrollRig",  name="Doomscroll Rig",    desc="Auto-scrolls for raw output.",    baseCost=1100,            baseBPS=4,           costMult=1.15, tier=1},
+    {id="NeuralTap",      name="Neural Tap",         desc="Taps into the brain stem.",       baseCost=12000,           baseBPS=20,          costMult=1.15, tier=1},
+    {id="SkibidiLab",     name="Skibidi Lab",        desc="Advanced skibidi science.",       baseCost=130000,          baseBPS=100,         costMult=1.15, tier=1},
+    -- Tier 2 (unlock at 1st rebirth via GD.RebirthMilestones)
+    {id="NeuralNetwork",  name="Neural Network",     desc="Self-improving brain cluster.",   baseCost=5000000,         baseBPS=5000,        costMult=1.15, tier=2},
+    {id="MemeVault",      name="Meme Vault",         desc="Stores memes for passive yield.", baseCost=50000000,        baseBPS=25000,       costMult=1.15, tier=2},
+    {id="DopamineDen",    name="Dopamine Den",       desc="Pure dopamine production.",       baseCost=500000000,       baseBPS=125000,      costMult=1.15, tier=2},
+    {id="CortexCollider", name="Cortex Collider",    desc="Smashes cortex for big BPS.",     baseCost=5000000000,      baseBPS=600000,      costMult=1.15, tier=2},
+    {id="QuantumQuirk",   name="Quantum Quirk",      desc="Quantum-entangled brain farms.",  baseCost=50000000000,     baseBPS=3000000,     costMult=1.15, tier=2},
 }
 GD.Milestones    = {10,25,50,100,200}
 GD.MilestoneMult = 2
@@ -47,6 +54,12 @@ GD.Upgrades = {
     {id="DeepTap",           name="Deep Tap",          desc="Neural Tap ×(1+5%/Neuron)",   tier="generator",type="rebirthSynergy",baseCost=70000,  genId="NeuralTap",                   req={type="genOwned",id="NeuralTap",count=10}},
     {id="ExperimentalLoop",  name="Experimental Loop", desc="Every 90s: ×2 BPS for 8s",   tier="generator",type="bpsStorm",      baseCost=250000,                                       req={type="genOwned",id="SkibidiLab",count=5}},
     {id="BulkBuyI",          name="Bulk Purchase",     desc="Buy up to ×5 on gen pads",    tier="generator",type="bulkBuy",       baseCost=15000,                                        req={type="anyGen",count=25}},
+    -- === Neural Expansion (Tier 2 upgrades, visible after 1st rebirth) ===
+    {id="SynapticBoostI",  name="Synaptic Boost I",    desc="×2 Neural Network BPS",      tier="NeuralExpansion", type="genMult",   baseCost=50000000,      genId="NeuralNetwork",  genMult=2,   req={type="genOwned",id="NeuralNetwork",count=10}},
+    {id="MemeCacheI",      name="Meme Cache I",         desc="×2 Meme Vault BPS",          tier="NeuralExpansion", type="genMult",   baseCost=500000000,     genId="MemeVault",      genMult=2,   req={type="genOwned",id="MemeVault",count=10}},
+    {id="DopamineRushI",   name="Dopamine Rush I",      desc="×1.5 global BPS",            tier="NeuralExpansion", type="globalBPS", baseCost=2000000000,    bpsMult=1.5,             req={type="genOwned",id="DopamineDen",count=5}},
+    {id="ColliderMatrix",  name="Collider Matrix",      desc="×2 Cortex Collider BPS",     tier="NeuralExpansion", type="genMult",   baseCost=20000000000,   genId="CortexCollider", genMult=2,   req={type="genOwned",id="CortexCollider",count=5}},
+    {id="QuantumEntangle", name="Quantum Entanglement", desc="×2 global BPS",              tier="NeuralExpansion", type="globalBPS", baseCost=200000000000,  bpsMult=2,               req={type="genOwned",id="QuantumQuirk",count=5}},
 }
 GD.MetaUpgrades = {
     {id="NeuralMultiplier",  name="Neural Multiplier",  desc="×1.2 global BPS, permanent",       neuronCost=1, type="neuronMult",    neuronBpsMult=1.2},

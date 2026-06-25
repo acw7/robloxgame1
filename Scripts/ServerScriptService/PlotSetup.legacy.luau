@@ -23,8 +23,20 @@ local function getMaxTier(rebirthCount)
 end
 
 local clickThrottle={}
-local GEN_COLORS={BrainJar=BrickColor.new("Bright blue"),MemeFarm=BrickColor.new("Bright green"),DoomscrollRig=BrickColor.new("Dark orange"),NeuralTap=BrickColor.new("Electric blue"),SkibidiLab=BrickColor.new("Bright violet")}
-local GEN_SLOTS={BrainJar=1,MemeFarm=2,DoomscrollRig=3,NeuralTap=4,SkibidiLab=5}
+local GEN_COLORS = {
+    BrainJar=BrickColor.new("Bright blue"),      MemeFarm=BrickColor.new("Bright green"),
+    DoomscrollRig=BrickColor.new("Dark orange"),  NeuralTap=BrickColor.new("Electric blue"),
+    SkibidiLab=BrickColor.new("Bright violet"),
+    -- Tier 2
+    NeuralNetwork=BrickColor.new("Cyan"),          MemeVault=BrickColor.new("Lime green"),
+    DopamineDen=BrickColor.new("Hot pink"),        CortexCollider=BrickColor.new("Deep orange"),
+    QuantumQuirk=BrickColor.new("Magenta"),
+}
+local GEN_SLOTS = {
+    BrainJar=1, MemeFarm=2, DoomscrollRig=3, NeuralTap=4, SkibidiLab=5,
+    -- Tier 2 (slots 6-10 on second floor)
+    NeuralNetwork=6, MemeVault=7, DopamineDen=8, CortexCollider=9, QuantumQuirk=10,
+}
 
 local function fmt(n) return GD.FormatNumber(n) end
 
@@ -251,7 +263,7 @@ local function connectPlot(player,plot)
                 local rpV2=ls2 and ls2:FindFirstChild("RP")
                 if not rpV2 or rpV2.Value<1 then return end
                 openShopEv:FireClient(player,"meta")
-            elseif cat=="generator" or cat=="upgrades" or cat=="rebirth" then
+            elseif cat=="generator" or cat=="upgrades" or cat=="rebirth" or cat=="NeuralExpansion" then
                 openShopEv:FireClient(player,cat)
             end
         end)

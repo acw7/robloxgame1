@@ -1,0 +1,1 @@
+local fmt = GD.FormatNumber
